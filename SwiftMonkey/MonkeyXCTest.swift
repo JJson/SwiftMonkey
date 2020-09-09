@@ -17,7 +17,7 @@ import XCTest
 extension Monkey {
     /// Generates a random `CGVector` inside the frame of the app.
     public func randomOffset() -> CGVector {
-        let point = randomPoint()
+        let point = randomPointAvoidingPanelAreas()
         return CGVector(dx: point.x, dy: point.y)
     }
     /**
@@ -61,6 +61,19 @@ extension Monkey {
                                          weight: Double,
                                          doubleTapProbability: Double = 0.05) {
         addAction(weight: weight) { [unowned self] in
+            let randomCount = arc4random()%100
+            if randomCount == 0 {
+                if app.buttons["nav back button"].exists,
+                    app.buttons["nav back button"].isHittable {
+                    app.buttons["nav back button"].tap()
+                    return
+                } else if app.buttons.count > 0 {
+                    let tapIndex = arc4random()%UInt32(app.buttons.count)
+                    app.buttons.element(at: Int(tapIndex)).tap()
+                    return
+                }
+                
+            }
             let doubleTap = self.r.randomDouble() < doubleTapProbability
             let coordinate = app.coordinate(withNormalizedOffset: .zero).withOffset(self.randomOffset())
             

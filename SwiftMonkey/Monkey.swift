@@ -228,8 +228,10 @@ public class Monkey {
 		let closure: ActionClosure = {
 			if app.state != .runningForeground {
 				app.activate()
+            } else {
+                action()
 			}
-			action()
+			
 		}
 		return {
 			if Thread.isMainThread {
